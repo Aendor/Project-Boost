@@ -5,10 +5,13 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
+    Rigidbody rigidBody;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        rigidBody = this.GetComponent<Rigidbody>();
+        print(rigidBody.name);
     }
 
     // Update is called once per frame
@@ -21,7 +24,7 @@ public class Rocket : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space)) // Thrust while rotating
         {
-            print("Thrusting");
+            rigidBody.AddRelativeForce(Vector3.up);
         }
 
         // Cannot rotate both ways at the same time
