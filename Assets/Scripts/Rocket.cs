@@ -6,9 +6,14 @@ public class Rocket : MonoBehaviour
 {
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
+
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip success;
     [SerializeField] AudioClip death;
+
+    [SerializeField] ParticleSystem mainEngineParticles;
+    [SerializeField] ParticleSystem successParticles;
+    [SerializeField] ParticleSystem deathParticles;
 
     Rigidbody rigidBody;
     AudioSource audioSource;
@@ -32,7 +37,6 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // todo: somewhere stop sound when dying
         if (state == State.Alive)
         {
             RespondToThrustInput();
@@ -64,6 +68,7 @@ public class Rocket : MonoBehaviour
         state = State.Trancening;
         audioSource.Stop();
         audioSource.PlayOneShot(success, 0.8f);
+        successParticles.Play();
         Invoke("LoadNextLevel", 1f); // parameterise time
     }
     private void StartDeathSequence()
@@ -71,6 +76,7 @@ public class Rocket : MonoBehaviour
         state = State.Dying;
         audioSource.Stop();
         audioSource.PlayOneShot(death, 0.05f);
+        deathParticles.Play();
         Invoke("LoadFirstLevel", 1f); // parameterise time
     }
     private void LoadNextLevel()
@@ -102,6 +108,7 @@ public class Rocket : MonoBehaviour
         else
         {
             audioSource.Stop();
+            mainEngineParticles.Stop();
         }
     }
 
@@ -112,6 +119,11 @@ public class Rocket : MonoBehaviour
         if (!audioSource.isPlaying) // So it doesnt layer
         {
             audioSource.PlayOneShot(mainEngine);
+        };
+
+        if (!mainEngineParticles.isPlaying) // So it doesnt layer
+        {
+            mainEngineParticles.Play();
         };
     }
 
