@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Reflection;
 
 public class Rocket : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class Rocket : MonoBehaviour
 
     Vector3 originalPosition;
     Quaternion originalRotation;
+
+    enum State { Alive, Dying, Trancening }
+    State state = State.Alive;
 
     // Start is called before the first frame update
     void Start()
@@ -25,12 +29,18 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Thrust();
-        Rotate();
+        // todo: somewhere stop sound when dying
+        if (state == State.Alive)
+        {
+            Thrust();
+            Rotate();
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        if (state != State.Alive) return; // Ignore Collisions when dead
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
@@ -38,16 +48,19 @@ public class Rocket : MonoBehaviour
                 break;
 
             case "Finish":
-                LoadNextScene();
+                state = State.Trancening;
+                Invoke("LoadNextLevel", 1f); // parameterise time
                 break;
 
             default:
-                GameReset();
+                print("Hit something deadly");
+                state = State.Dying;
+                Invoke("LoadFirstLevel", 1f); // parameterise time
                 break;
         }
     }
 
-    private static void LoadNextScene()
+    private void LoadNextLevel()
     {
         int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
         int maxScene = SceneManager.sceneCountInBuildSettings - 1;
@@ -62,7 +75,7 @@ public class Rocket : MonoBehaviour
         }
     }
 
-    private void GameReset()
+    private void LoadFirstLevel()
     {
         SceneManager.LoadScene(0);
     }

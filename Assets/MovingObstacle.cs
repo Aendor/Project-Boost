@@ -21,14 +21,12 @@ public class MovingObstacle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        StartCoroutine(MyCoroutine());
+        Invoke("MoveObstacle", WaitTime);
     }
-    IEnumerator MyCoroutine()
+    private void MoveObstacle()
     {
-        yield return new WaitForSeconds(WaitTime);    //Wait
-        //calculate what the new Y position will be
         float newY = pos.y + Mathf.Sin(Time.time * speed) * height;
-        //set the object's Y to the new calculated Y
+        
         transform.position = new Vector3(pos.x, newY, pos.z);
     }
 }
