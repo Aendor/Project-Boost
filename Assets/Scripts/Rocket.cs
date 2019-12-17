@@ -11,9 +11,15 @@ public class Rocket : MonoBehaviour
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
 
+    Vector3 originalPosition;
+    Quaternion originalRotation;
+
     // Start is called before the first frame update
     void Start()
     {
+        originalPosition = this.transform.position;
+        originalRotation = this.transform.rotation;
+
         rigidBody = this.GetComponent<Rigidbody>();
         audioSource = this.GetComponent<AudioSource>();
     }
@@ -33,9 +39,16 @@ public class Rocket : MonoBehaviour
                 // Do nothing
                 break;
             default:
-                Destroy(this.gameObject);
+                GameReset();
                 break;
         }
+    }
+
+    private void GameReset()
+    {
+        this.gameObject.transform.position = originalPosition;
+        this.gameObject.transform.rotation = originalRotation;
+        rigidBody.Sleep();
     }
 
     private void Thrust()
