@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
@@ -38,17 +36,35 @@ public class Rocket : MonoBehaviour
             case "Friendly":
                 // Do nothing
                 break;
+
+            case "Finish":
+                LoadNextScene();
+                break;
+
             default:
                 GameReset();
                 break;
         }
     }
 
+    private static void LoadNextScene()
+    {
+        int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
+        int maxScene = SceneManager.sceneCountInBuildSettings - 1;
+
+        if (nextScene <= maxScene)
+        {
+            SceneManager.LoadScene(nextScene);
+        }
+        else
+        {
+            SceneManager.LoadScene(0);
+        }
+    }
+
     private void GameReset()
     {
-        this.gameObject.transform.position = originalPosition;
-        this.gameObject.transform.rotation = originalRotation;
-        rigidBody.Sleep();
+        SceneManager.LoadScene(0);
     }
 
     private void Thrust()
